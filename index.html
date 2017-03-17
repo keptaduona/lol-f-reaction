@@ -105,6 +105,7 @@
     var start = false;
     var end = false;
     var count = 3000;
+    var preset = 30;
     var gotRight = 0;
     var gotWrong = 0;
     var counter = null;
@@ -118,6 +119,7 @@
     // TIMER
     function startClock() {
         if (!start) {
+            preset = count/100;
             counter = setInterval(timer, 10); //10 will  run it every 100th of a second
             start = true;
         }
@@ -164,7 +166,7 @@
             $('#letter').fadeOut("fast");
             $('#got-wrong').text('Got Wrong: ' + gotWrong);
             $('#got-right').text('Got Right: ' + gotRight);
-            $('#per-second').text('Speed: ' + (gotRight / 30).toFixed(2) + " per second");
+            $('#per-second').text('Speed: ' + (gotRight / preset).toFixed(2) + " per second");
             $('.end-screen').fadeIn("slow");
 
         }
