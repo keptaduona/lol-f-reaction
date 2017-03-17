@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Reaction</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="mute-button"><span style="font-size: 50px; margin: 5px;" class="glyphicon glyphicon-volume-up"></span></div>
+    <div class="container">
+        <div id="letter">
+            <h1>W</h1>
+        </div>
+        <div class="messageBox">
+            <h3 id="startMessage">Press W to START</h3>
+            <div class="end-screen" style="display: none">
+                <h2 id="per-second" style="color: blue"></h2>
+                <h2 id="got-right" style="color: green"></h2>
+                <h2 id="got-wrong" style="color: red"></h2>
+                <button type="button" id="end-button" class="btn-lg btn-success" style="margin-top: 25px">Try again?</button>
+            </div>
+        </div>
+        <div class="timer">
+            <button type="button" class="btn-lg btn-danger timer-mod-button timer-mod-minus">-</button>
+            <div class="timer-container" style="width: 140px; text-align: justify;">
+                <h1 id="timer">30.00</h1>
+            </div>
+            <button type="button" class="btn-lg btn-success timer-mod-button timer-mod-plus">+</button>
+        </div>
+    </div>
+    <div id="credentials">
+        <h4><a href="https://leagueoflegends.com">LoL</a> F-key trainer</h4>
+        <p>made by <a href="https://github.com/kinderis94">me</a></p>
+    </div>
+</body>
+
+</html>
+
+<style>
+    #credentials {
+        position: absolute;
+        bottom: 2%;
+        left: 2%;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    #letter {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .timer {
+        text-align: left;
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: 100px;
+        display: flex;
+        align-items: center;
+    }
+
+    .messageBox {
+        position: absolute;
+        bottom: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+
+    #letter h1 {
+        font-size: 100px;
+    }
+
+    .timer-mod-button {
+        height: 45px;
+        width: 60px;
+    }
+
+    #timer {
+        font-size: 50px;
+        margin: 5px;
+    }
+
+    .glyphicon:hover {
+        cursor: pointer;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous">
+</script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var letters = ['Q', 'W', 'E', 'R', 'F1', 'F2', 'F3', 'F4'];
+    var letter = 'W';
+    var start = false;
+    var end = false;
+    var count = 3000;
+    var gotRight = 0;
+    var gotWrong = 0;
+    var counter = null;
+    var wrong = new Audio("wrong.wav");
+    var correct = new Audio("correct.wav");
+    var five_seconds = new Audio("five_seconds.wav");
+    var five_straight = new Audio("five_straight.wav");
+    var end_game = new Audio("end.wav");
+    var volume = true;
+
+    // TIMER
+    function startClock() {
+        if (!start) {
+            counter = setInterval(timer, 10); //10 will  run it every 100th of a second
+            start = true;
+        }
+
+        $('#startMessage').fadeOut('fast');
+        $('.timer-mod-button').fadeOut('fast');
+
+    }
+
+    function triggerStartState() {
+        count = 3000;
+        end = false;
+        document.getElementById("timer").innerHTML = count / 100 + ".00";
+        $('#letter h1').text("W");
+        $('#timer').css('color', 'rgb(51, 51, 51)');
+        $('.end-screen').fadeOut("fast");
+        $('#timer').fadeIn("slow");
+        $('#letter').fadeIn("slow");
+        $('#startMessage').fadeIn('slow');
+        $('.timer-mod-button').fadeIn('slow');
+    }
+
+    function playSound(sound) {
+        if(volume) {
+            sound.play();
+        }
+    }
+
+    function timer() {
+
+        if (count < 500) {
+            $('#timer').css('color', 'red');
+            playSound(five_seconds);
+        }
+
+        // END HERE
+        if (count < 3) {
+            playSound(end_game);
+            clearInterval(counter);
+            start = false;
+            end = true;
+
+            $('#timer').fadeOut("fast");
+            $('#letter').fadeOut("fast");
+            $('#got-wrong').text('Got Wrong: ' + gotWrong);
+            $('#got-right').text('Got Right: ' + gotRight);
+            $('#per-second').text('Speed: ' + (gotRight / 30).toFixed(2) + " per second");
+            $('.end-screen').fadeIn("slow");
+
+        }
+
+        count--;
+        document.getElementById("timer").innerHTML = count / 100;
+    }
+    // TIMER
+
+
+    function disableFunctionKeys(e) {
+        var functionKeys = new Array(112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 123);
+        if (functionKeys.indexOf(e.keyCode) > -1 || functionKeys.indexOf(e.which) > -1) {
+            e.preventDefault();
+            triggerButton(e.key);
+        }
+    };
+
+    function triggerButton(key) {
+        do {
+            next = letters[Math.floor(Math.random() * letters.length)];
+        } while (next === key)
+
+        if (key == $('#letter h1').text() && end != true) {
+
+            startClock();
+
+            if (start) {
+
+                gotRight += 1;
+
+                if (gotRight % 5 == 0) {
+                    playSound(five_straight);
+                } else {
+                    playSound(correct);
+                }
+
+                $('#letter h1').fadeOut(10)
+                    .queue(function(n) {
+                        $(this).text(next);
+                        n();
+                    }).animate({
+                        color: 'rgb(51, 51, 51)'
+                    }, 10).fadeIn(10);
+            }
+
+        } else if (key == 'F8') {
+            count = 0;
+            start = false;
+        } else if (key == 'F9') {
+            count = 500;
+        } else {
+            if (start) {
+                $('#letter h1').animate({
+                    color: 'red'
+                }, 50);
+                gotWrong += 1;
+                playSound(wrong);
+            }
+        }
+    }
+
+    $(document).on('keydown', disableFunctionKeys);
+
+
+
+    $(document).ready(function() {
+        $('body').keypress(function(e) {
+            triggerButton(e.key.toUpperCase());
+        });
+
+        $('#end-button').click(function() {
+            triggerStartState();
+        });
+
+        $('.timer-mod-plus').click(function() {
+            if(count < 6000) {
+                count += 1500;
+                document.getElementById("timer").innerHTML = count / 100 + ".00";
+            }
+        });
+
+        $('.timer-mod-minus').click(function() {
+            if(count > 1500) {
+                count -= 1500;
+                document.getElementById("timer").innerHTML = count / 100 + ".00";
+            }
+        });
+
+        $('#mute-button').on('click', function(){
+
+            $(".glyphicon").toggleClass("glyphicon-volume-up").toggleClass("glyphicon-volume-off");
+
+            if(volume) {
+                volume = 0;
+            } else {
+                volume = 1;
+            }
+
+        });
+
+    })
+</script>
